@@ -210,6 +210,15 @@ public class JetbrainsHttpClientClientCodegen extends DefaultCodegen implements 
                     // find in schema example
                     String exampleAsString = (codegenOperation.bodyParam.getSchema().getExample());
                     items.add(new RequestItem(codegenOperation.summary, exampleAsString));
+                } else
+                if (this.openAPI.getComponents().getSchemas().get(codegenOperation.bodyParam.getContent().get("application/json").getSchema().dataType).getExample() != null) {
+                    var examples = this.openAPI.getComponents().getSchemas().get(codegenOperation.bodyParam.getContent().get("application/json").getSchema().dataType).getExample();
+                    ObjectMapper o = new ObjectMapper();
+                    try{
+                        items.add(new RequestItem(codegenOperation.summary, o.writerWithDefaultPrettyPrinter().writeValueAsString(examples)));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     // example not found
                     // get from schema
